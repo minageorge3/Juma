@@ -1,18 +1,31 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // 1. استيراد الراوتر
+import { useRouter } from 'next/navigation';
+
+// 1. هنا عرفنا شكل المنتج عشان TypeScript يفهمنا
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+}
 
 export default function CheckoutPage() {
-  const router = useRouter(); // 2. تعريف الراوتر
-  const [cart, setCart] = useState([]);
+  const router = useRouter();
+  
+  // 2. هنا حددنا إن الـ cart هي عبارة عن مصفوفة من النوع CartItem
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
   useEffect(() => {
     const savedCart = localStorage.getItem("myCart");
-    if (savedCart) setCart(JSON.parse(savedCart));
+    if (savedCart) {
+      // استخدمنا 'as CartItem[]' عشان نطمن الـ TypeScript إن البيانات اللي جاية هي منتجاتنا
+      setCart(JSON.parse(savedCart) as CartItem[]);
+    }
   }, []);
 
+  // دلوقتي الـ reduce هتعرف إن الـ item فيه price
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
   const sendToWhatsApp = () => {
@@ -35,7 +48,6 @@ export default function CheckoutPage() {
     <div className="p-10 text-black max-w-2xl mx-auto">
       <h1 className="text-amber-50 text-3xl font-bold mb-6 text-center">بيانات الطلب 📝</h1>
       
-      {/* لو السلة فاضية، نظهر رسالة لطيفة */}
       {cart.length === 0 ? (
         <div className="text-center bg-white p-10 rounded-xl shadow-lg">
           <p className="text-xl mb-6">سلتك فارغة حالياً 🛒</p>
@@ -49,8 +61,17 @@ export default function CheckoutPage() {
       ) : (
         <>
           <div className="bg-gray-100 p-6 rounded-xl mb-6">
-            <input className="w-full p-3 mb-3 border rounded" placeholder="اسمك الكريم" onChange={(e) => setName(e.target.value)} />
-            <input className="w-full p-3 border rounded" type="tel" placeholder="رقم تليفونك (للتواصل)" onChange={(e) => setPhone(e.target.value)} />
+            <input 
+              className="w-full p-3 mb-3 border rounded" 
+              placeholder="اسمك الكريم" 
+              onChange={(e) => setName(e.target.value)} 
+            />
+            <input 
+              className="w-full p-3 border rounded" 
+              type="tel" 
+              placeholder="رقم تليفونك (للتواصل)" 
+              onChange={(e) => setPhone(e.target.value)} 
+            />
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow-lg border">
