@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// 1. هنا عرفنا شكل المنتج عشان TypeScript يفهمنا
 interface CartItem {
   id: string;
   name: string;
@@ -11,8 +10,6 @@ interface CartItem {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  
-  // 2. هنا حددنا إن الـ cart هي عبارة عن مصفوفة من النوع CartItem
   const [cart, setCart] = useState<CartItem[]>([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -20,12 +17,10 @@ export default function CheckoutPage() {
   useEffect(() => {
     const savedCart = localStorage.getItem("myCart");
     if (savedCart) {
-      // استخدمنا 'as CartItem[]' عشان نطمن الـ TypeScript إن البيانات اللي جاية هي منتجاتنا
       setCart(JSON.parse(savedCart) as CartItem[]);
     }
   }, []);
 
-  // دلوقتي الـ reduce هتعرف إن الـ item فيه price
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
   const sendToWhatsApp = () => {
@@ -40,7 +35,7 @@ export default function CheckoutPage() {
       `المنتجات:%0A${cart.map(i => `- ${i.name} (${i.price} ج.م)`).join('%0A')}%0A%0A` +
       `الإجمالي: ${total} ج.م`;
 
-    const myWhatsApp = "2000000"; // تأكد من وضع رقمك هنا
+    const myWhatsApp = "2000000"; // عدل الرقم هنا
     window.open(`https://wa.me/${myWhatsApp}?text=${message}`, "_blank");
   };
 
